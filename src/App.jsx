@@ -9,7 +9,7 @@ import { ProfileCompletion } from './components/ProfileCompletion';
 import SearchPage from './pages/SearchPage';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import Signup from './pages/Signup'; // make sure this file exists
+import Signup from './pages/Signup';
 import ViewProfile from './pages/ViewProfile';
 import ForgotPassword from './pages/ForgotPassword';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -29,7 +29,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-and-conditions" element={<TermsConditions />} />
+            <Route path="/termsandconditions" element={<TermsConditions />} />
             <Route path="/cookie-policy" element={<CookiePolicy />} />
             <Route path="/complete-profile" element={<ProfileCompletion />} />
             <Route path="/search" element={<SearchPage />} />
