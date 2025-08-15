@@ -7,8 +7,9 @@ const Footer = () => {
   return (
     <div className="relative">
       {/* Back to Top Arrow Button - left corner, only in footer */}
-      {/* <button
+      <button
         onClick={e => {
+          if (!e.currentTarget) return;
           e.currentTarget.classList.add('scale-90');
           // Scroll to top in exactly 2 seconds
           const totalDuration = 700; // ms
@@ -25,7 +26,7 @@ const Footer = () => {
           }
           requestAnimationFrame(animateScroll);
           setTimeout(() => {
-            e.currentTarget.classList.remove('scale-90');
+            if (e.currentTarget) e.currentTarget.classList.remove('scale-90');
           }, 150);
         }}
         className="absolute left-4 bottom-4 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg p-3 flex items-center justify-center transition-all duration-200 z-20 active:scale-90"
@@ -34,7 +35,7 @@ const Footer = () => {
         style={{ transition: 'transform 0.15s' }}
       >
         <ArrowUp className="w-6 h-6" />
-      </button> */}
+      </button>
        {/* Footer */}
     <footer className="bg-gray-900 text-white py-8 md:py-12">
       <div>
