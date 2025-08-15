@@ -92,15 +92,15 @@ const AuthenticatedHeader = () => {
   return (
 
   <header className="sticky top-0 z-50 transition-all duration-300 backdrop-blur-md bg-white/30 shadow-md w-full">
-  <div className="w-full px-4 sm:px-8 md:px-16 lg:px-[6rem]">
+  <div className="mx-auto px-4 sm:px-6 lg:px-8">
 
         <div className="flex items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center cursor-pointer">
-            <div className="rounded-full flex items-center justify-center mr-3 overflow-hidden">
-              <img src={logo} alt="Heart MM Logo" className="w-12 h-12 object-contain" />
+            <div className="rounded-full p-2 mr-3">
+              <img src={logo} alt="Heart MM Logo" className="w-12 h-12 rounded-full object-contain" />
             </div>
-            <h1 className="text-xl font-bold text-[#FB2C36]">Marrying Muslims</h1>
+            <h1 className="text-xl font-bold text-[#DC2626]">Marrying Muslims</h1>
           </Link>
 
           {/* Spacer to push nav and user icon to right */}
@@ -112,8 +112,6 @@ const AuthenticatedHeader = () => {
               {navLinks.map((link) => {
                 const Icon = link.icon;
                 const isActive = currentPage === link.to;
-                // Only show dashboard link once on profile page
-                if (currentPage === '/profile' && link.to === '/dashboard') return null;
                 return (
                   <Link
                     key={link.to}
@@ -132,64 +130,72 @@ const AuthenticatedHeader = () => {
             </nav>
           )}
 
-          {/* User Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 focus:outline-none"
-            >
-              {getProfileImage() ? (
-                <img
-                  src={getProfileImage()}
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-              ) : (
-                <User className="w-8 h-8 p-1 bg-gray-200 rounded-full" />
-              )}
-            </button>
+          {/* User Dropdown and Search Button (Dashboard only) */}
+          <div className="flex items-center gap-2 relative">
+            {/* Show search button only on dashboard */}
+            {currentPage === '/dashboard' && (
+              <Link to="/search" className="p-2 rounded-full hover:bg-gray-100 transition-colors" title="Search">
+                <Search className="w-6 h-6 text-[#DC2626]" />
+              </Link>
+            )}
+            <div className="relative">
+              <button
+                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 focus:outline-none"
+              >
+                {getProfileImage() ? (
+                  <img
+                    src={getProfileImage()}
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <User className="w-8 h-8 p-1 bg-gray-200 rounded-full text-[#DC2626]" />
+                )}
+              </button>
 
-            {/* Dropdown Menu */}
-            {userDropdownOpen && (
-              <div ref={dropdownRef} className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                <div className="px-4 py-3 border-b border-gray-100">
-                  <div className="flex items-center space-x-3">
-                    {getProfileImage() ? (
-                      <img
-                        src={getProfileImage()}
-                        alt="Profile"
-                        className="w-7 h-7 rounded-full object-cover"
-                      />
-                    ) : (
-                      <User className="w-7 h-7 p-1 bg-gray-200 rounded-full" />
-                    )}
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{getDisplayName()}</p>
-                      <div className="flex items-center space-x-1">
-                        <p className="text-xs text-gray-500 break-all max-w-[140px] truncate">{userInfo?.email || 'No email'}</p>
+              {/* Dropdown Menu */}
+              {userDropdownOpen && (
+                <div ref={dropdownRef} className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <div className="flex items-center space-x-3">
+                      {getProfileImage() ? (
+                        <img
+                          src={getProfileImage()}
+                          alt="Profile"
+                          className="w-7 h-7 rounded-full object-cover"
+                        />
+                      ) : (
+                        <User className="w-7 h-7 p-1 bg-gray-200 rounded-full text-[#DC2626]" />
+                      )}
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{getDisplayName()}</p>
+                        <div className="flex items-center space-x-1">
+                          <p className="text-xs text-gray-500 break-all max-w-[140px] truncate">{userInfo?.email || 'No email'}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
+
+                  <Link
+                    to="/profile"
+                    className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    onClick={() => setUserDropdownOpen(false)}
+                  >
+                    <UserCircle className="w-4 h-4" />
+                    <span>Profile</span>
+                  </Link>
+
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Logout</span>
+                  </button>
                 </div>
-
-                <Link
-                  to="/profile"
-                  className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                  onClick={() => setUserDropdownOpen(false)}
-                >
-                  <UserCircle className="w-4 h-4" />
-                  <span>Profile</span>
-                </Link>
-
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
-                </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
 

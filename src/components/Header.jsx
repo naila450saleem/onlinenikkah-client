@@ -26,10 +26,12 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <div className=" rounded-full p-2 mr-3">
-              <img src={logo} alt="Heart MM Logo" className="w-12 h-12 rounded-full object-contain" />
-            </div>
-           <a href="/"> <span className="text-xl font-bold text-[#DC2626]">Marrying Muslims</span></a>
+            <Link to="/" className="flex items-center">
+              <div className="rounded-full p-2 mr-3">
+                <img src={logo} alt="Heart MM Logo" className="w-12 h-12 rounded-full object-contain" />
+              </div>
+              <span className="text-xl font-bold text-[#DC2626]">Marrying Muslims</span>
+            </Link>
           </div>
 
           {/* Desktop Nav */}
@@ -43,6 +45,23 @@ const Header = () => {
             <Link to='/signup' className="bg-[#DC2626] hover:bg-red-600 text-white px-6 py-2 rounded-md font-medium transition-colors cursor-pointer">
               Sign Up
             </Link>
+            {/* Profile Pic Dropdown for Authenticated Users (like dashboard) */}
+            {localStorage.getItem('loggedInUser') && (
+              <Link to="/dashboard" className="flex items-center ml-4">
+                <img
+                  src={(() => {
+                    try {
+                      const user = JSON.parse(localStorage.getItem('loggedInUser'));
+                      if (user?.gender === 'Male') return '/images/man.jpg';
+                      if (user?.gender === 'Female') return '/images/woman.png';
+                      return '/images/man.jpg';
+                    } catch { return '/images/man.jpg'; }
+                  })()}
+                  alt="Profile"
+                  className="w-9 h-9 rounded-full object-cover"
+                />
+              </Link>
+            )}
           </nav>
 
           {/* Mobile Menu Icon */}

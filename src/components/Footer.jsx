@@ -11,20 +11,8 @@ const Footer = () => {
         onClick={(e) => {
           if (!e.currentTarget) return;
           e.currentTarget.classList.add("scale-90");
-          // Scroll to top in exactly 2 seconds
-          const totalDuration = 700; // ms
-          const start = window.scrollY;
-          const startTime = performance.now();
-          function animateScroll(now) {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / totalDuration, 1);
-            const ease = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-            window.scrollTo(0, start * (1 - ease));
-            if (progress < 1) {
-              requestAnimationFrame(animateScroll);
-            }
-          }
-          requestAnimationFrame(animateScroll);
+          // Instantly scroll to top
+          window.scrollTo({ top: 0, behavior: 'auto' });
           setTimeout(() => {
             if (e.currentTarget) e.currentTarget.classList.remove("scale-90");
           }, 150);
@@ -127,7 +115,7 @@ const Footer = () => {
 
             {/* Contact */}
             <div className="flex flex-col items-start px-4 sm:px-6 md:px-0">
-              <h3 className="text-white font-semibold mb-3">Contact</h3>
+              <h3 className="text-white font-semibold mb-3">Email</h3>
               <div className="space-y-1 text-base text-gray-400 text-left w-full">
                 <a className="mb-4" href="mailto:help@marryingmuslims.com">
                   help@marryingmuslims.com

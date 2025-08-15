@@ -48,7 +48,7 @@ const PrivacyPolicy = () => {
               </h2>
             </div>
             <p className="text-gray-700 leading-relaxed">
-              At MarryingMuslims, we are dedicated to protecting your privacy
+              At Marrying Muslims, we are dedicated to protecting your privacy
               and ensuring the security of your personal information. This
               Privacy Policy outlines how we collect, use, disclose, and
               safeguard your information when you use our Islamic matrimonial

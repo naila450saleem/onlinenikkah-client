@@ -17,75 +17,11 @@ import {
 } from "lucide-react";
 import { auth, db, realtimeDb } from '../firebase/firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { ref as dbRef, onValue } from 'firebase/database';
+
 import { toast } from 'react-toastify';
 import AuthenticatedHeader from '../components/AuthenticatedHeader';
 
-const countries = [
-  "All Countries",
-  "Afghanistan",
-  "Albania",
-  "Algeria",
-  "Azerbaijan",
-  "Bahrain",
-  "Bangladesh",
-  "Brunei",
-  "Burkina Faso",
-  "Chad",
-  "Comoros",
-  "Djibouti",
-  "Egypt",
-  "Gambia",
-  "Guinea",
-  "Indonesia",
-  "Iran",
-  "Iraq",
-  "Jordan",
-  "Kazakhstan",
-  "Kuwait",
-  "Kyrgyzstan",
-  "Lebanon",
-  "Libya",
-  "Malaysia",
-  "Maldives",
-  "Mali",
-  "Mauritania",
-  "Morocco",
-  "Niger",
-  "Oman",
-  "Pakistan",
-  "Palestine",
-  "Qatar",
-  "Saudi Arabia",
-  "Senegal",
-  "Sierra Leone",
-  "Somalia",
-  "Sudan",
-  "Syria",
-  "Tajikistan",
-  "Tunisia",
-  "Turkey",
-  "Turkmenistan",
-  "United Arab Emirates",
-  "Uzbekistan",
-  "Western Sahara",
-  "Yemen",
-  "United States",
-  "United Kingdom",
-  "Canada",
-  "Australia",
-  "France",
-  "Germany",
-  "Italy",
-  "Spain",
-  "Japan",
-  "China",
-  "Russia",
-  "Brazil",
-  "South Africa",
-  "South Korea",
-  "New Zealand"
-];
+
 
 
 const maritalStatuses = ["All Status", "Never Married", "Divorced", "Widowed"];
@@ -123,6 +59,8 @@ const getInitialProfilesToShow = () => {
 };
 
 const SearchPage = () => {
+  // Dynamically set countries: only show UK if any profile is from the UK
+  const [countries, setCountries] = useState([]);
   const [profilesToShow, setProfilesToShow] = useState(getInitialProfilesToShow());
   // Update profilesToShow on resize (responsive)
   useEffect(() => {
@@ -144,7 +82,7 @@ const SearchPage = () => {
   const [selectedProfession, setSelectedProfession] = useState("All Professions");
   const [profiles, setProfiles] = useState([]);
   const [filteredProfiles, setFilteredProfiles] = useState([]);
-  const [onlineStatuses, setOnlineStatuses] = useState({});
+  // Removed onlineStatuses state
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState(null);
   // Get current user ID on mount
@@ -160,7 +98,6 @@ const SearchPage = () => {
     "Age: Low to High",
     "Age: High to Low",
     "Name: A to Z",
-    "Online First",
   ];
 
   // Fetch all user profiles from Firestore
@@ -168,57 +105,36 @@ const SearchPage = () => {
     const fetchProfiles = async () => {
       try {
         setLoading(true);
-        
-        console.log('Fetching profiles from userProfileData collection...');
-        
         const profilesCollection = collection(db, 'userProfileData');
         const profilesSnapshot = await getDocs(profilesCollection);
         const profilesData = [];
-        
-        console.log('Total documents found in userProfileData:', profilesSnapshot.size);
-        
-        if (profilesSnapshot.size === 0) {
-          console.log('No documents found in userProfileData collection');
-          console.log('Checking if there are other collections...');
-          
-          // Let's also check if there are users in the 'users' collection (Realtime Database equivalent)
-          // For now, we'll show a message
-          toast.info('No profiles found in userProfileData collection. Users might not have completed their profiles yet.');
-        }
-        
+        let hasUK = false;
         profilesSnapshot.forEach((doc) => {
           const data = doc.data();
-          console.log('Document ID:', doc.id);
-          console.log('Document data:', data);
-          console.log('Has personalInfo:', !!data.personalInfo);
-          console.log('Has profileCompleted:', data.profileCompleted);
-          
-          // Show ALL profiles without any filtering conditions
-          // Calculate age from date of birth
-          let age = 25; // default age
+          // ...existing code...
+          let age = 25;
           if (data.personalInfo?.dateOfBirth) {
             try {
               const birthDate = new Date(data.personalInfo.dateOfBirth);
               const today = new Date();
-              
-              // Check if the date is valid
               if (!isNaN(birthDate.getTime()) && birthDate < today) {
                 age = today.getFullYear() - birthDate.getFullYear();
                 const monthDiff = today.getMonth() - birthDate.getMonth();
                 if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
                   age--;
                 }
-                // Ensure age is reasonable
                 if (age < 18 || age > 100) {
-                  age = 25; // fallback to default
+                  age = 25;
                 }
               }
             } catch (error) {
-              console.log('Error calculating age for profile:', doc.id, error);
-              age = 25; // fallback to default
+              age = 25;
             }
           }
-
+          const country = data.familyBackground?.country?.trim() || '';
+          if (country.toLowerCase() === 'united kingdom' || country.toLowerCase() === 'uk') {
+            hasUK = true;
+          }
           const profileData = {
             id: doc.id,
             name: data.personalInfo ? `${data.personalInfo.firstName || ''} ${data.personalInfo.lastName || ''}`.trim() || 'Anonymous' : 'Anonymous',
@@ -231,23 +147,22 @@ const SearchPage = () => {
             gender: data.personalInfo?.gender || 'Not specified',
             expectations: data.personalInfo?.expectations || '',
             healthConditions: data.personalInfo?.healthConditions || '',
-            isOnline: false, // You can implement online status later
             createdAt: data.profileCompletedAt || data.createdAt || new Date().toISOString(),
             personalInfo: data.personalInfo || {},
             familyBackground: data.familyBackground || {},
             careerEducation: data.careerEducation || {},
             religiousInfo: data.religiousInfo || {}
           };
-          
-          console.log('Processed profile data:', profileData);
           profilesData.push(profileData);
         });
-        
-        console.log('Final profiles to display:', profilesData.length);
-        console.log('All profiles:', profilesData);
-        
         setProfiles(profilesData);
         setFilteredProfiles(profilesData);
+        // Set countries filter: only show UK if present
+        if (hasUK) {
+          setCountries(["All Countries", "United Kingdom"]);
+        } else {
+          setCountries(["All Countries"]);
+        }
       } catch (error) {
         console.error('Error fetching profiles:', error);
         toast.error('Failed to load profiles: ' + error.message);
@@ -255,7 +170,6 @@ const SearchPage = () => {
         setLoading(false);
       }
     };
-
     fetchProfiles();
   }, []);
 
@@ -368,9 +282,7 @@ const SearchPage = () => {
       case "Name: A to Z":
         filtered.sort((a, b) => a.name.localeCompare(b.name));
         break;
-      case "Online First":
-        filtered.sort((a, b) => (b.isOnline ? 1 : 0) - (a.isOnline ? 1 : 0));
-        break;
+  // Removed Online First sort
       case "Newest First":
       default:
         filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -382,25 +294,7 @@ const SearchPage = () => {
     setFilteredProfiles(filtered);
   }, [profiles, searchQuery, ageRange, selectedCountry, selectedMaritalStatus, selectedEducation, selectedProfession, sortBy]);
 
-  // Listen for online status of all profiles
-  useEffect(() => {
-    if (!profiles.length) return;
-    const listeners = [];
-    profiles.forEach((profile) => {
-      if (!profile.id) return;
-      const statusRef = dbRef(realtimeDb, '/status/' + profile.id);
-      const unsubscribe = onValue(statusRef, (snap) => {
-        setOnlineStatuses((prev) => ({
-          ...prev,
-          [profile.id]: snap.val()?.state === 'online' ? 'online' : 'offline',
-        }));
-      });
-      listeners.push(unsubscribe);
-    });
-    return () => {
-      listeners.forEach((unsub) => unsub && unsub());
-    };
-  }, [profiles]);
+  // Removed online status effect
 
   const clearAllFilters = () => {
     setSearchQuery("");
@@ -464,16 +358,7 @@ const SearchPage = () => {
             <Camera className="w-8 h-8 text-gray-400" />
           )}
         </div>
-        <div className="absolute top-3 left-3 flex items-center gap-1">
-          <span
-            className="inline-block w-3 h-3 rounded-full border border-gray-400"
-            style={{ backgroundColor: onlineStatuses[profile.id] === 'online' ? '#22c55e' : '#d1d5db' }}
-            title={onlineStatuses[profile.id] === 'online' ? 'Online' : 'Offline'}
-          />
-          <span className="bg-gray-500 text-white text-xs px-2 py-1 rounded">
-            {onlineStatuses[profile.id] === 'online' ? 'Online' : 'Offline'}
-          </span>
-        </div>
+        {/* Removed online/offline status indicator */}
       </div>
       <div className="p-4">
         <div className="flex justify-between items-start mb-3">
@@ -526,9 +411,7 @@ const SearchPage = () => {
             <Camera className="w-6 h-6 text-gray-400" />
           )}
         </div>
-        <div className="absolute -top-1 -right-1 bg-gray-500 text-white text-xs px-2 py-1 rounded">
-          {profile.isOnline ? 'Online' : 'Offline'}
-        </div>
+  {/* Removed online/offline status indicator */}
       </div>
 
       <div className="flex-1">
@@ -646,7 +529,7 @@ const SearchPage = () => {
                   {/* Search Input */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Search by name, location, or profession
+                      Search by name, location, or education
                     </label>
                     <div className="relative">
                       <input
@@ -716,18 +599,7 @@ const SearchPage = () => {
                     />
                   </div>
 
-                  {/* Profession */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Profession
-                    </label>
-                    <Dropdown
-                      value={selectedProfession}
-                      options={professions}
-                      onChange={setSelectedProfession}
-                      placeholder="Select Profession"
-                    />
-                  </div>
+                  {/* Profession filter removed */}
                 </div>
               </div>
             </div>
