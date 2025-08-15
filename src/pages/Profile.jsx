@@ -230,9 +230,18 @@ const Profile = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Phone Number
                 </label>
-                <div className="text-gray-900">
-                  {userInfo?.phone || "Not provided"}
-                </div>
+                {isEditing && editingTab === "Personal" ? (
+                  <input
+                    type="text"
+                    value={editFormData.phone || ""}
+                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  />
+                ) : (
+                  <div className="text-gray-900">
+                    {profileData?.personalInfo?.phone || userInfo?.phone || "Not provided"}
+                  </div>
+                )}
               </div>
 
               <div>
@@ -635,7 +644,7 @@ const Profile = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Profession
+                  Occupation
                 </label>
                 {isEditing && editingTab === "Career" ? (
                   <input
@@ -685,33 +694,7 @@ const Profile = () => {
                 )}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Employment Status
-                </label>
-                {isEditing && editingTab === "Career" ? (
-                  <select
-                    value={editFormData.employmentStatus || ""}
-                    onChange={(e) =>
-                      handleInputChange("employmentStatus", e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-                  >
-                    <option value="">Select employment status</option>
-                    <option value="Employed">Employed</option>
-                    <option value="Self-Employed">Self-Employed</option>
-                    <option value="Unemployed">Unemployed</option>
-                    <option value="Student">Student</option>
-                    <option value="Retired">Retired</option>
-                    <option value="Other">Other</option>
-                  </select>
-                ) : (
-                  <div className="text-gray-900">
-                    {profileData?.careerEducation?.employmentStatus ||
-                      "Not provided"}
-                  </div>
-                )}
-              </div>
+
             </div>
           </div>
         );
@@ -860,6 +843,7 @@ const Profile = () => {
         aboutMe: profileData?.personalInfo?.aboutMe || "",
         expectations: profileData?.personalInfo?.expectations || "",
         healthConditions: profileData?.personalInfo?.healthConditions || "",
+        phone: profileData?.personalInfo?.phone || userInfo?.phone || "",
         country: profileData?.familyBackground?.country || "",
         city: profileData?.familyBackground?.city || "",
         maritalStatus: profileData?.familyBackground?.maritalStatus || "",
@@ -968,6 +952,7 @@ const Profile = () => {
             aboutMe: editFormData.aboutMe,
             expectations: editFormData.expectations,
             healthConditions: editFormData.healthConditions,
+            phone: editFormData.phone,
           },
           familyBackground: {
             ...profileData.familyBackground,
