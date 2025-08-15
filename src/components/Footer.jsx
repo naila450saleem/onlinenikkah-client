@@ -6,8 +6,37 @@ import { Link } from 'react-router-dom'
 const Footer = () => {
   return (
     <div className="relative">
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8 md:py-12 relative z-10">
+      {/* Back to Top Arrow Button - left corner, only in footer */}
+      <button
+        onClick={e => {
+          e.currentTarget.classList.add('scale-90');
+          // Scroll to top in exactly 2 seconds
+          const totalDuration = 700; // ms
+          const start = window.scrollY;
+          const startTime = performance.now();
+          function animateScroll(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / totalDuration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+            window.scrollTo(0, start * (1 - ease));
+            if (progress < 1) {
+              requestAnimationFrame(animateScroll);
+            }
+          }
+          requestAnimationFrame(animateScroll);
+          setTimeout(() => {
+            e.currentTarget.classList.remove('scale-90');
+          }, 150);
+        }}
+        className="absolute left-4 bottom-4 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg p-3 flex items-center justify-center transition-all duration-200 z-20 active:scale-90"
+        title="Back to Top"
+        aria-label="Back to Top"
+        style={{ transition: 'transform 0.15s' }}
+      >
+        <ArrowUp className="w-6 h-6" />
+      </button>
+       {/* Footer */}
+    <footer className="bg-gray-900 text-white py-8 md:py-12">
       <div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-9 mt-12 mr-5">
           <div className="flex justify-center sm:justify-start items-center">
@@ -34,7 +63,7 @@ const Footer = () => {
             <h3 className="text-white font-semibold mb-3">Quick Links</h3>
             <ul className="space-y-2">
               <li><a href="#howitworks" className="text-gray-400 hover:text-white text-base transition-colors">How It Works</a></li>
-              <li><a href="#ourvision" className="text-gray-400 hover:text-white text-base transition-colors">Our Vision</a></li>
+              <li><a href="#successstories" className="text-gray-400 hover:text-white text-base transition-colors">Our Vision</a></li>
               <li><a href="#faq" className="text-gray-400 hover:text-white text-base transition-colors">FAQ</a></li>
             </ul>
           </div>
@@ -67,36 +96,7 @@ const Footer = () => {
           <p className="text-gray-400 text-xs sm:text-sm">© 2025 Marrying Muslims. All rights reserved.</p>
         </div>
       </div>
-      </footer>
-      {/* Back to Top Arrow Button - left corner, only in footer */}
-      <button
-        onClick={e => {
-          e.currentTarget.classList.add('scale-90');
-          // Scroll to top in exactly 2 seconds
-          const totalDuration = 700; // ms
-          const start = window.scrollY;
-          const startTime = performance.now();
-          function animateScroll(now) {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / totalDuration, 1);
-            const ease = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-            window.scrollTo(0, start * (1 - ease));
-            if (progress < 1) {
-              requestAnimationFrame(animateScroll);
-            }
-          }
-          requestAnimationFrame(animateScroll);
-          setTimeout(() => {
-            e.currentTarget.classList.remove('scale-90');
-          }, 150);
-        }}
-        className="fixed left-4 bottom-4 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg p-3 flex items-center justify-center transition-all duration-200 z-10 active:scale-90 md:z-20"
-        title="Back to Top"
-        aria-label="Back to Top"
-        style={{ transition: 'transform 0.15s' }}
-      >
-        <ArrowUp className="w-6 h-6" />
-      </button>
+    </footer>
     </div>
   )
 }
