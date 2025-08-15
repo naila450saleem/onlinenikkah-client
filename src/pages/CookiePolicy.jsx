@@ -1,15 +1,6 @@
 import React, { useEffect } from "react";
-// import BackButton from '../components/BackButton';
-import {
-  Cookie,
-  HelpCircle,
-  Target,
-  Settings,
-  Shield,
-  Phone,
-} from "lucide-react";
+import {Cookie, HelpCircle, Target, Settings, Shield, Phone} from "lucide-react";
 import Header from "../components/Header";
-import { ArrowUp } from 'lucide-react';
 import Footer from "../components/Footer";
 
 const CookiePolicy = () => {
@@ -19,29 +10,27 @@ const CookiePolicy = () => {
   return (
     <>
       <Header />
-  <div className="min-h-screen bg-pink-50 py-8 px-4 relative">
-        {/* <button
-          onClick={() => {
-            const scrollStep = () => {
-              const currentScroll = window.scrollY;
-              if (currentScroll > 0) {
-                window.scrollBy(0, -80);
-                setTimeout(scrollStep, 5);
-              }
-            };
-            scrollStep();
-          }}
-          className="absolute left-4 bottom-4 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg p-3 flex items-center justify-center transition-all duration-200 z-20"
-          title="Back to Top"
-          aria-label="Back to Top"
-          style={{ transition: 'transform 0.15s' }}
-        >
-          <ArrowUp className="w-6 h-6" />
-        </button> */}
+      <div className="min-h-screen bg-pink-50 py-8 px-4 relative">
         <div className="max-w-4xl mx-auto">
           <div className="mb-4">
-            <a href="/" className="inline-flex items-center text-red-600 hover:text-red-800 font-medium">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+            <a
+              href="/"
+              className="inline-flex items-center text-red-600 hover:text-red-800 font-medium"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
               Back To Home
             </a>
           </div>
@@ -59,7 +48,10 @@ const CookiePolicy = () => {
               </h2>
             </div>
             <p className="text-gray-700 leading-relaxed">
-              This Cookie Policy explains how Marrying Muslims uses cookies and similar tracking technologies to recognise you when you visit our website. It explains what these technologies are, why we use them, and your rights to control their use.
+              This Cookie Policy explains how Marrying Muslims uses cookies and
+              similar tracking technologies to recognise you when you visit our
+              website. It explains what these technologies are, why we use them,
+              and your rights to control their use.
             </p>
           </div>
 
@@ -185,7 +177,8 @@ const CookiePolicy = () => {
               </h2>
             </div>
             <p className="text-gray-700">
-              For more information about our use of cookies, feel free to contact us at {" "}
+              For more information about our use of cookies, feel free to
+              contact us at{" "}
               <a
                 href="mailto:help@marryingmuslims.com"
                 className="text-red-500 hover:text-red-600"
@@ -197,7 +190,7 @@ const CookiePolicy = () => {
           </div>
         </div>
       </div>
-       <Footer/>
+      <Footer />
     </>
   );
 };

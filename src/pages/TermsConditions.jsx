@@ -1,9 +1,7 @@
-import React, { useEffect } from 'react';
-// import BackButton from '../components/BackButton';
-import { FileText, Users, Shield, Globe, Copyright, AlertTriangle, Phone, Lock } from 'lucide-react';
-import Header from '../components/Header';
-import { ArrowUp } from 'lucide-react';
-import Footer from '../components/Footer';
+import React, {useEffect} from "react";
+import { FileText, Users, Shield, Globe, Copyright, AlertTriangle, Phone, Lock } from "lucide-react";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const TermsConditions = () => {
   useEffect(() => {
@@ -13,24 +11,6 @@ const TermsConditions = () => {
     <>
     <Header />
   <div className="min-h-screen bg-pink-50 py-8 px-4 relative">
-      {/* <button
-        onClick={() => {
-          const scrollStep = () => {
-            const currentScroll = window.scrollY;
-            if (currentScroll > 0) {
-              window.scrollBy(0, -80);
-              setTimeout(scrollStep, 5);
-            }
-          };
-          scrollStep();
-        }}
-        className="absolute left-4 bottom-4 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg p-3 flex items-center justify-center transition-all duration-200 z-20"
-        title="Back to Top"
-        aria-label="Back to Top"
-        style={{ transition: 'transform 0.15s' }}
-      >
-        <ArrowUp className="w-6 h-6" />
-      </button> */}
       <div className="max-w-4xl mx-auto">
         <div className="mb-4">
           <a href="/" className="inline-flex items-center text-red-600 hover:text-red-800 font-medium">

@@ -29,7 +29,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/termsandconditions" element={<TermsConditions />} />
+            <Route path="/terms-and-conditions" element={<TermsConditions />} />
             <Route path="/cookie-policy" element={<CookiePolicy />} />
             <Route path="/complete-profile" element={<ProfileCompletion />} />
             <Route path="/search" element={<SearchPage />} />
