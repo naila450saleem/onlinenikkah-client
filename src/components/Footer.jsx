@@ -7,7 +7,7 @@ const Footer = () => {
   return (
     <div className="relative">
       {/* Back to Top Arrow Button - left corner, only in footer */}
-      <button
+      {/* <button
         onClick={e => {
           e.currentTarget.classList.add('scale-90');
           // Scroll to top in exactly 2 seconds
@@ -34,7 +34,7 @@ const Footer = () => {
         style={{ transition: 'transform 0.15s' }}
       >
         <ArrowUp className="w-6 h-6" />
-      </button>
+      </button> */}
        {/* Footer */}
     <footer className="bg-gray-900 text-white py-8 md:py-12">
       <div>
