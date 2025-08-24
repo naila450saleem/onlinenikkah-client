@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./AuthContext";
 import { ProtectedRoute } from "./ProtectedRoute";
@@ -16,7 +17,26 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
 import CookiePolicy from "./pages/CookiePolicy";
 
+// 👇 import anonymous login + write test data
+import { signInAnon, writeTestData } from "./firebase/auth";
+
 function App() {
+  // 👇 Run only once when app starts
+  useEffect(() => {
+    signInAnon()
+      .then((user) => {
+        console.log("✅ Anonymous login successful:", user.uid);
+
+        // 👇 Save test data in Firebase
+        writeTestData(user.uid)
+          .then(() => console.log("✅ Test data saved in DB"))
+          .catch((err) => console.error("❌ DB error:", err));
+      })
+      .catch((error) => {
+        console.error("❌ Login failed:", error.message);
+      });
+  }, []);
+
   return (
     <AuthProvider>
       <BrowserRouter>
