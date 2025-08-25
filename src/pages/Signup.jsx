@@ -83,9 +83,13 @@ const Signup = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
       const storage = getStorage();
-      let imageUrl = '';
+
+let imageUrl = '';
+// ✅ Add this image upload code here
 if(profileImage){
-  const imageRef = storageRef(storage, `profileImages/${user.uid}_${profileImage.name}`);
+  // Replace spaces in filename to avoid errors
+  const imageName = profileImage.name.replace(/\s/g, "_");
+  const imageRef = storageRef(storage, `profileImages/${user.uid}_${imageName}`);
   await uploadBytes(imageRef, profileImage);
   imageUrl = await getDownloadURL(imageRef);
 }
