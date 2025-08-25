@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { auth, db } from '../firebase/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import { ref, set } from 'firebase/database';
 import { realtimeDb } from '../firebase/firebase';
 
@@ -31,6 +32,8 @@ const Signup = () => {
     confirmPassword: ''
   });
 
+  const [profileImage, setProfileImage] = useState(null);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -38,6 +41,13 @@ const Signup = () => {
       [name]: value
     }));
   };
+
+  const handleImageChange = (e) => {
+  if (e.target.files[0]) {
+    setProfileImage(e.target.files[0]);
+  }
+};
+
 
   // Validation function
   const validateForm = () => {
@@ -72,6 +82,14 @@ const Signup = () => {
       // Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
+      const storage = getStorage();
+      let imageUrl = '';
+if(profileImage){
+  const imageRef = storageRef(storage, `profileImages/${user.uid}_${profileImage.name}`);
+  await uploadBytes(imageRef, profileImage);
+  imageUrl = await getDownloadURL(imageRef);
+}
+
       // Store extra info in Realtime Database
       await set(ref(realtimeDb, 'users/' + user.uid), {
         username: formData.username,
@@ -79,10 +97,12 @@ const Signup = () => {
         phone: formData.phone,
         password: formData.password, // Not recommended in production
         confirmPassword: formData.confirmPassword, // Not recommended in production
+         profileImage: imageUrl,
         createdAt: new Date().toISOString()
       });
   toast.success('Signup Successful!');
       setFormData({ username: '', email: '', phone: '', password: '', confirmPassword: '' });
+      setProfileImage(null); // ✅ Clear selected image
       navigate('/complete-profile');
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
@@ -145,6 +165,19 @@ const Signup = () => {
                 required
               />
             </div>
+
+            {/* Profile Image Field - Add this here */}
+<div>
+  <label className="block text-gray-700 text-sm font-medium mb-2">
+    Profile Image
+  </label>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleImageChange}
+    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none"
+  />
+</div>
 
             {/* Email Field */}
             <div>
