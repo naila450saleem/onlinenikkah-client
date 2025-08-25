@@ -23,12 +23,14 @@ const TAB_TYPES = ["Personal", "Preferences", "Career", "Privacy"];
 const Profile = () => {
   const [onlineStatus, setOnlineStatus] = useState("offline");
   // Helper to get default profile image based on gender
-  function getProfileImage() {
-    const gender = profileData?.personalInfo?.gender?.toLowerCase();
-    if (gender === "male") return "/images/man.jpg";
-    if (gender === "female") return "/images/woman.png";
-    return null;
-  }
+ // Helper to get default profile image based on gender
+const getProfileImage = () => {
+  const gender = profileData?.personalInfo?.gender?.toLowerCase();
+  if (gender === "male") return "/images/man.jpg";
+  if (gender === "female") return "/images/woman.png";
+  return "/images/default.png";  // fallback image
+};
+
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Personal");
   const [showVisibilityDropdown, setShowVisibilityDropdown] = useState(false);
@@ -44,6 +46,50 @@ const Profile = () => {
   const [saving, setSaving] = useState(false);
   const [editingTab, setEditingTab] = useState("");
 
+  const fetchProfileData = async () => {
+  try {
+    const user = auth.currentUser;
+    console.log("Current User:", user);
+
+    if (user) {
+      const profileDoc = await getDoc(doc(db, "userProfileData", user.uid));
+      console.log(
+        "Profile Doc:",
+        profileDoc.exists() ? profileDoc.data() : "Not found"
+      );
+
+      if (profileDoc.exists()) {
+        const data = profileDoc.data();
+        setProfileData(data);
+
+        // agar profile settings hain to unko set karo
+        if (data.profileSettings) {
+          setShowOnlineStatus(data.profileSettings.showOnlineStatus !== false);
+          setSelectedVisibility(
+            data.profileSettings.visibility ||
+              "Public - Visible to all users"
+          );
+        } else {
+          setShowOnlineStatus(true);
+          setSelectedVisibility("Public - Visible to all users");
+        }
+      } else {
+        toast.info("Please complete your profile first");
+        navigate("/complete-profile");
+        return;
+      }
+    } else {
+      console.warn("No authenticated user found");
+    }
+  } catch (error) {
+    console.error("Error fetching profile data:", error);
+    // toast.error("Failed to load profile data");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   useEffect(() => {
     // Listen for online status
     const user = auth.currentUser;
@@ -54,44 +100,71 @@ const Profile = () => {
         setOnlineStatus(snap.val()?.state || "offline");
       });
     }
+
+  
     const fetchProfileData = async () => {
-      try {
-        // Get current authenticated user
-        const user = auth.currentUser;
-        if (user) {
-          setUserInfo({ email: user.email, phone: user.phoneNumber });
-          // Fetch profile data from Firestore
-          const profileDoc = await getDoc(doc(db, "userProfileData", user.uid));
-          if (profileDoc.exists()) {
-            const data = profileDoc.data();
-            setProfileData(data);
-            // Load privacy settings if present
-            if (data.profileSettings) {
-              setShowOnlineStatus(
-                data.profileSettings.showOnlineStatus !== false
-              ); // default true
-              setSelectedVisibility(
-                data.profileSettings.visibility ||
-                  "Public - Visible to all users"
-              );
-            } else {
-              setShowOnlineStatus(true);
-              setSelectedVisibility("Public - Visible to all users");
-            }
-          } else {
-            console.log("No profile data found");
-            toast.info("Please complete your profile first");
-            navigate("/complete-profile");
-            return;
-          }
+  try {
+    const user = auth.currentUser;
+
+    if (user) {
+      setUserInfo({ email: user.email, phone: user.phoneNumber });
+
+      const profileDoc = await getDoc(doc(db, "userProfileData", user.uid));
+
+      if (profileDoc.exists()) {
+        const data = profileDoc.data();
+        setProfileData(data);
+
+        // Load privacy settings if present
+        if (data.profileSettings) {
+          setShowOnlineStatus(data.profileSettings.showOnlineStatus !== false); // default true
+          setSelectedVisibility(
+            data.profileSettings.visibility || "Public - Visible to all users"
+          );
+        } else {
+          setShowOnlineStatus(true);
+          setSelectedVisibility("Public - Visible to all users");
         }
-      } catch (error) {
-        console.error("Error fetching profile data:", error);
-        toast.error("Failed to load profile data");
-      } finally {
-        setLoading(false);
+      } else {
+        console.log("No profile data found");
+
+        // ✅ Default empty structure so app does not crash
+        setProfileData({
+          personalInfo: {},
+          familyBackground: {},
+          religiousInfo: {},
+          careerEducation: {},
+          profileSettings: {
+            showOnlineStatus: true,
+            visibility: "Public - Visible to all users",
+          },
+        });
+
+        toast.info("Please complete your profile first");
+        navigate("/complete-profile");
       }
-    };
+    }
+  } catch (error) {
+    console.error("Error fetching profile data:", error);
+
+    // ✅ Set empty fallback on error also
+    setProfileData({
+      personalInfo: {},
+      familyBackground: {},
+      religiousInfo: {},
+      careerEducation: {},
+      profileSettings: {
+        showOnlineStatus: true,
+        visibility: "Public - Visible to all users",
+      },
+    });
+
+   
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     fetchProfileData();
     return () => {
@@ -1030,28 +1103,17 @@ const Profile = () => {
             ) : (
               <div className="flex flex-col xs:flex-row items-center xs:items-start xs:space-x-6 gap-4 xs:gap-0">
                 {/* Profile Image */}
-                <div className="w-24 h-24 bg-black rounded-full flex-shrink-0 relative overflow-hidden mb-4 xs:mb-0">
-                  {getProfileImage() ? (
-                    <img
-                      src={getProfileImage()}
-                      alt="Profile"
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-black">
-                      <svg
-                        viewBox="0 0 100 100"
-                        className="w-full h-full text-white"
-                      >
-                        <path
-                          d="M50 10 C35 10 25 25 25 40 C25 50 30 58 38 62 L38 70 C38 80 42 85 50 85 C58 85 62 80 62 70 L62 62 C70 58 75 50 75 40 C75 25 65 10 50 10 Z"
-                          fill="currentColor"
-                          opacity="0.6"
-                        />
-                      </svg>
-                    </div>
-                  )}
-                </div>
+               <div className="w-24 h-24 bg-black rounded-full flex-shrink-0 relative overflow-hidden mb-4 xs:mb-0">
+  <img
+    src={getProfileImage()}
+    alt="Profile"
+    className="w-full h-full object-cover rounded-full"
+    onError={(e) => {
+      e.target.src = "/images/default.png"; // agar man/woman wali image missing ho
+    }}
+  />
+</div>
+
                 {/* Profile Info */}
                 <div className="flex-grow w-full">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-0">

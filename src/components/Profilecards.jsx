@@ -13,6 +13,7 @@ const Profilecards = () => {
               <img
                 className="w-full h-full rounded-full"
                 src="./images/man.jpg"
+                alt="Man"
               />
             </div>
           </div>
@@ -42,6 +43,7 @@ const Profilecards = () => {
               <img
                 className="w-full h-full rounded-full"
                 src="./images/woman.png"
+                alt="Women"
               />
             </div>
           </div>
