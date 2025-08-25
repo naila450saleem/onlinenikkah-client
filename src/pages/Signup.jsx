@@ -171,17 +171,7 @@ if(profileImage){
             </div>
 
             {/* Profile Image Field - Add this here */}
-<div>
-  <label className="block text-gray-700 text-sm font-medium mb-2">
-    Profile Image
-  </label>
-  <input
-    type="file"
-    accept="image/*"
-    onChange={handleImageChange}
-    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none"
-  />
-</div>
+
 
             {/* Email Field */}
             <div>
